@@ -166,7 +166,10 @@ export default function NotebookApp() {
                   {formatDate(selectedNote.updatedAt)}
                 </span>
                 <button
-                  onClick={() => deleteNote(selectedNote.id)}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    deleteNote(selectedNote.id);
+                  }}
                   className="text-red-500 hover:text-red-600 text-sm font-medium"
                 >
                   Delete
@@ -206,4 +209,5 @@ export default function NotebookApp() {
     </div>
   );
 }
+
 
