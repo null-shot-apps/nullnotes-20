@@ -59,8 +59,12 @@ export default function NotebookApp() {
     }
   };
 
-  const deleteNote = (id: string) => {
-    if (confirm('Are you sure you want to delete this note?')) {
+  const deleteNote = (id: string, e?: React.MouseEvent) => {
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+    if (window.confirm('Are you sure you want to delete this note?')) {
       setNotes(notes.filter(note => note.id !== id));
       if (selectedNote?.id === id) {
         setSelectedNote(null);
@@ -166,10 +170,7 @@ export default function NotebookApp() {
                   {formatDate(selectedNote.updatedAt)}
                 </span>
                 <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    deleteNote(selectedNote.id);
-                  }}
+                  onClick={(e) => deleteNote(selectedNote.id, e)}
                   className="text-red-500 hover:text-red-600 text-sm font-medium"
                 >
                   Delete
@@ -209,5 +210,7 @@ export default function NotebookApp() {
     </div>
   );
 }
+
+
 
 
