@@ -129,23 +129,43 @@ export default function NotebookApp() {
               filteredNotes.map(note => (
                 <div
                   key={note.id}
-                  onClick={() => {
-                    setSelectedNote(note);
-                    setIsCreating(false);
-                  }}
-                  className={`p-4 border-b border-gray-100 cursor-pointer hover:bg-gray-50 transition-colors ${
+                  className={`p-4 border-b border-gray-100 hover:bg-gray-50 transition-colors ${
                     selectedNote?.id === note.id ? 'bg-blue-50' : ''
                   }`}
                 >
-                  <h3 className="font-medium text-gray-900 mb-1 truncate">
-                    {note.title || 'Untitled Note'}
-                  </h3>
-                  <p className="text-sm text-gray-600 mb-2 line-clamp-2">
-                    {note.content || 'No content'}
-                  </p>
-                  <span className="text-xs text-gray-400">
-                    {formatDate(note.updatedAt)}
-                  </span>
+                  <div 
+                    onClick={() => {
+                      setSelectedNote(note);
+                      setIsCreating(false);
+                    }}
+                    className="cursor-pointer"
+                  >
+                    <h3 className="font-medium text-gray-900 mb-1 truncate">
+                      {note.title || 'Untitled Note'}
+                    </h3>
+                    <p className="text-sm text-gray-600 mb-2 line-clamp-2">
+                      {note.content || 'No content'}
+                    </p>
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs text-gray-400">
+                        {formatDate(note.updatedAt)}
+                      </span>
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          if (window.confirm('Are you sure you want to delete this note?')) {
+                            setNotes(notes.filter(n => n.id !== note.id));
+                            if (selectedNote?.id === note.id) {
+                              setSelectedNote(null);
+                            }
+                          }
+                        }}
+                        className="text-red-500 hover:text-red-600 text-xs font-medium px-2 py-1 rounded hover:bg-red-50"
+                      >
+                        Delete
+                      </button>
+                    </div>
+                  </div>
                 </div>
               ))
             )}
@@ -210,6 +230,7 @@ export default function NotebookApp() {
     </div>
   );
 }
+
 
 
 
