@@ -60,16 +60,32 @@ export default function NotebookApp() {
   };
 
   const deleteNote = (id: string, e?: React.MouseEvent) => {
+    console.log('🔴 DELETE CALLED - Note ID:', id);
+    console.log('🔴 Current notes count:', notes.length);
+    
     if (e) {
       e.preventDefault();
       e.stopPropagation();
+      console.log('🔴 Event prevented and stopped');
     }
-    if (window.confirm('Are you sure you want to delete this note?')) {
+    
+    const confirmed = window.confirm('Are you sure you want to delete this note?');
+    console.log('🔴 User confirmed:', confirmed);
+    
+    if (confirmed) {
       const updatedNotes = notes.filter(note => note.id !== id);
+      console.log('🔴 Updated notes count:', updatedNotes.length);
+      console.log('🔴 Filtered notes:', updatedNotes);
+      
       setNotes(updatedNotes);
       localStorage.setItem('notebook-notes', JSON.stringify(updatedNotes));
+      
+      console.log('🔴 localStorage updated');
+      console.log('🔴 localStorage value:', localStorage.getItem('notebook-notes'));
+      
       if (selectedNote?.id === id) {
         setSelectedNote(null);
+        console.log('🔴 Selected note cleared');
       }
     }
   };
@@ -224,6 +240,7 @@ export default function NotebookApp() {
     </div>
   );
 }
+
 
 
 
