@@ -65,7 +65,9 @@ export default function NotebookApp() {
       e.stopPropagation();
     }
     if (window.confirm('Are you sure you want to delete this note?')) {
-      setNotes(notes.filter(note => note.id !== id));
+      const updatedNotes = notes.filter(note => note.id !== id);
+      setNotes(updatedNotes);
+      localStorage.setItem('notebook-notes', JSON.stringify(updatedNotes));
       if (selectedNote?.id === id) {
         setSelectedNote(null);
       }
@@ -151,15 +153,7 @@ export default function NotebookApp() {
                         {formatDate(note.updatedAt)}
                       </span>
                       <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          if (window.confirm('Are you sure you want to delete this note?')) {
-                            setNotes(notes.filter(n => n.id !== note.id));
-                            if (selectedNote?.id === note.id) {
-                              setSelectedNote(null);
-                            }
-                          }
-                        }}
+                        onClick={(e) => deleteNote(note.id, e)}
                         className="text-red-500 hover:text-red-600 text-xs font-medium px-2 py-1 rounded hover:bg-red-50"
                       >
                         Delete
@@ -230,6 +224,8 @@ export default function NotebookApp() {
     </div>
   );
 }
+
+
 
 
 
