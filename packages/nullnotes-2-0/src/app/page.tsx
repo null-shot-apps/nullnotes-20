@@ -15,6 +15,7 @@ export default function NotebookApp() {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedNote, setSelectedNote] = useState<Note | null>(null);
   const [isCreating, setIsCreating] = useState(false);
+  const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
 
   // Load notes from localStorage on mount
   useEffect(() => {
@@ -60,34 +61,28 @@ export default function NotebookApp() {
   };
 
   const deleteNote = (id: string, e?: React.MouseEvent) => {
-    console.log('🔴 DELETE CALLED - Note ID:', id);
-    console.log('🔴 Current notes count:', notes.length);
-    
     if (e) {
       e.preventDefault();
       e.stopPropagation();
-      console.log('🔴 Event prevented and stopped');
     }
-    
-    const confirmed = window.confirm('Are you sure you want to delete this note?');
-    console.log('🔴 User confirmed:', confirmed);
-    
-    if (confirmed) {
-      const updatedNotes = notes.filter(note => note.id !== id);
-      console.log('🔴 Updated notes count:', updatedNotes.length);
-      console.log('🔴 Filtered notes:', updatedNotes);
-      
+    setDeleteConfirm(id);
+  };
+
+  const confirmDelete = () => {
+    if (deleteConfirm) {
+      const updatedNotes = notes.filter(note => note.id !== deleteConfirm);
       setNotes(updatedNotes);
       localStorage.setItem('notebook-notes', JSON.stringify(updatedNotes));
       
-      console.log('🔴 localStorage updated');
-      console.log('🔴 localStorage value:', localStorage.getItem('notebook-notes'));
-      
-      if (selectedNote?.id === id) {
+      if (selectedNote?.id === deleteConfirm) {
         setSelectedNote(null);
-        console.log('🔴 Selected note cleared');
       }
+      setDeleteConfirm(null);
     }
+  };
+
+  const cancelDelete = () => {
+    setDeleteConfirm(null);
   };
 
   const filteredNotes = notes.filter(note =>
@@ -111,7 +106,7 @@ export default function NotebookApp() {
   };
 
   return (
-    <div className="h-[100dvh] w-full bg-gray-50 flex flex-col">
+    <div className="h-[100dvh] w-full bg-gray-50 flex flex-col relative">
       {/* Header */}
       <header className="bg-white border-b border-gray-200 px-4 py-3 flex items-center justify-between">
         <h1 className="text-xl font-semibold text-gray-900">Notes</h1>
@@ -237,9 +232,37 @@ export default function NotebookApp() {
           )}
         </div>
       </div>
+
+      {/* Delete Confirmation Modal */}
+      {deleteConfirm && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg shadow-xl max-w-sm w-full p-6">
+            <h3 className="text-lg font-semibold text-gray-900 mb-2">Delete Note?</h3>
+            <p className="text-gray-600 mb-6">Are you sure you want to delete this note? This action cannot be undone.</p>
+            <div className="flex gap-3">
+              <button
+                onClick={cancelDelete}
+                className="flex-1 px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 font-medium transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={confirmDelete}
+                className="flex-1 px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg font-medium transition-colors"
+              >
+                Delete
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
+
+
+
+
 
 
 
